@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best in PA Restaurants</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="hero">
+            <h1>Best in PA Restaurants</h1>
+            <p>Find Pennsylvania restaurants ranked by a machine-learning Price-vs-Quality score.</p>
+        </section>
+
+        <section class="card">
+            <h2>Search Rankings</h2>
+            <form action="/results" method="POST" class="form-grid">
+                <label>
+                    City
+                    <select name="city">
+                        <option value="All">All Cities</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Category
+                    <select name="category">
+                        <option value="All">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Max Price
+                    <select name="max_price">
+                        <option value="1">$</option>
+                        <option value="2">$$</option>
+                        <option value="3">$$$</option>
+                        <option value="4" selected>$$$$</option>
+                    </select>
+                </label>
+
+                <button type="submit">Rank Restaurants</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Model Summary</h2>
+            <p><strong>Cross-validation R²:</strong> {{ cv_r2 }}</p>
+            <p><strong>Test R²:</strong> {{ metrics.r2 }} | <strong>MAE:</strong> {{ metrics.mae }} | <strong>RMSE:</strong> {{ metrics.rmse }}</p>
+            <p class="note">This version uses synthetic demo data. Replace it with real restaurant data before final submission.</p>
+        </section>
+
+        <section class="card">
+            <h2>Current Top Restaurants</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Category</th>
+                        <th>Stars</th>
+                        <th>Reviews</th>
+                        <th>Price</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in top_restaurants.iterrows() %}
+                    <tr>
+                        <td>{{ row['name'] }}</td>
+                        <td>{{ row['city'] }}</td>
+                        <td>{{ row['category'] }}</td>
+                        <td>{{ row['stars'] }}</td>
+                        <td>{{ row['review_count'] }}</td>
+                        <td>{{ '$' * row['price'] }}</td>
+                        <td>{{ "%.2f"|format(row['pq_score']) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

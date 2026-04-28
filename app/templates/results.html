@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="hero compact">
+            <h1>Ranking Results</h1>
+            <p>Filters: {{ selected_city }} | {{ selected_category }} | Max Price: {{ '$' * max_price }}</p>
+            <a href="/" class="back-link">← Back to Search</a>
+        </section>
+
+        <section class="card">
+            <h2>Top Matching Restaurants</h2>
+            {% if restaurants.empty %}
+                <p>No restaurants matched your filters.</p>
+            {% else %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Category</th>
+                            <th>Stars</th>
+                            <th>Reviews</th>
+                            <th>Price</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for _, row in restaurants.iterrows() %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ row['name'] }}</td>
+                            <td>{{ row['city'] }}</td>
+                            <td>{{ row['category'] }}</td>
+                            <td>{{ row['stars'] }}</td>
+                            <td>{{ row['review_count'] }}</td>
+                            <td>{{ '$' * row['price'] }}</td>
+                            <td>{{ "%.2f"|format(row['pq_score']) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </section>
+
+        <section class="card">
+            <h2>Most Important Features</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Importance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for _, row in feature_importance.iterrows() %}
+                    <tr>
+                        <td>{{ row['Feature'] }}</td>
+                        <td>{{ "%.4f"|format(row['Importance']) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h2>Model Metrics</h2>
+            <p><strong>Cross-validation R²:</strong> {{ cv_r2 }}</p>
+            <p><strong>Test R²:</strong> {{ metrics.r2 }}</p>
+            <p><strong>MAE:</strong> {{ metrics.mae }}</p>
+            <p><strong>RMSE:</strong> {{ metrics.rmse }}</p>
+        </section>
+    </main>
+</body>
+</html>
