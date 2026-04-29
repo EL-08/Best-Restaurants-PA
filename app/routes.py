@@ -16,7 +16,7 @@ df, model, scaler, cv_r2, feature_importance, metrics = load_model_and_data()
 def index():
     cities = sorted(df["city"].unique())
     categories = sorted(df["category"].unique())
-    top_restaurants = df.sort_values("pq_score", ascending=False).head(10)
+    top_restaurants = df.sort_values("pq_score", ascending=False).head(100)
 
     return render_template(
         "index.html",
